@@ -20,7 +20,7 @@ This has been tested with and is supported on PHP 7.1, but should work fine on o
 
 ## Configuration
 
-Copy `config-sample.php` to `config.php` and populate all non-optional variables after configuring webhooks in both Discourse and Discord.
+Copy `config-template.php` to `config.php` and populate all non-optional variables after configuring webhooks in both Discourse and Discord.
 
 ## About Crit Cola
 
