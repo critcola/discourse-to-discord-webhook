@@ -2,7 +2,7 @@
 
 # Discourse to Discord Webhook
 
-This PHP script acts an intermediary between Discourse and Discord, receiving webhooks from Discourse and parsing them in an optimal format before relaying them to Discord.
+This PHP script acts an intermediary between Discourse and Discord, receiving webhooks from Discourse and parsing them into an optimal format before relaying them to Discord.
 
 ## Demo
 
