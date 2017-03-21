@@ -29,31 +29,28 @@ else {
 }
 
 // Prepare the payload for use in the PHP script.
-$discourse_payload = json_decode($discourse_payload_raw);
+$discourse_payload = json_decode($discourse_payload_raw, true)["post"];
 
 // Disregard posts without content, such as lock and sticky post types.
-$discourse_post = $discourse_payload->post;
-if ($discourse_post->post_type != 1) {
-	return ', disregarded (post_type = ' . $discourse_post->post_type . ')';
+if ($discourse_payload["post_type"] != 1) {
+	return ', disregarded (post_type = ' . $discourse_payload["post_type"] . ')';
 }
 
 // Begin building the payload for the Discord webhook.
 $discord_payload = array();
 
 // Credit the post's author in the embed.
-$discourse_user = $discourse_payload->user;
-$discord_payload['embeds'][0]['author']['name'] = $discourse_user->username;
-$discord_payload['embeds'][0]['author']['icon_url'] = $discourse_url_protocol . '://' . $discourse_url_domain . str_replace('{size}', '45', $discourse_user->avatar_template);
-$discord_payload['embeds'][0]['author']['url'] = $discourse_url_protocol . '://' . $discourse_url_domain . $discourse_path . 'users/' . $discourse_user->username . $discourse_author_url_suffix;
+$discord_payload['embeds'][0]['author']['name'] = $discourse_payload["username"];
+$discord_payload['embeds'][0]['author']['icon_url'] = $discourse_url_protocol . '://' . $discourse_url_domain . str_replace('{size}', '45', $discourse_payload["avatar_template"]);
+$discord_payload['embeds'][0]['author']['url'] = $discourse_url_protocol . '://' . $discourse_url_domain . $discourse_path . 'users/' . $discourse_payload["username"] . $discourse_author_url_suffix;
 
 // Build the body of the embed.
-$discourse_topic = $discourse_payload->topic;
-$discourse_post_url = $discourse_url_protocol . '://' . $discourse_url_domain . $discourse_path . 't/' . $discourse_topic->slug . '/' . $discourse_topic->id . ($discourse_post->post_number > 1 ? '/' . $discourse_post->post_number : '');
+$discourse_post_url = $discourse_url_protocol . '://' . $discourse_url_domain . $discourse_path . 't/' . $discourse_payload["topic_slug"] . '/' . $discourse_payload["topic_id"] . ($discourse_payload["post_number"] > 1 ? '/' . $discourse_payload["post_number"] : '');
 $discord_payload['embeds'][0]['type'] = 'rich';
 $discord_payload['embeds'][0]['color'] = hexdec(ltrim($discord_embed_color));
 $discord_payload['embeds'][0]['url'] = $discourse_post_url . $discourse_post_url_suffix_title;
-$discord_payload['embeds'][0]['title'] = $discourse_topic->title;
-$discord_payload['embeds'][0]['description'] = "**@" . $discourse_user->username . "** " . ($discourse_post->post_number == 1 ? "created" : "replied to") . " this topic.\n\n**[[Read more]](" . $discourse_post_url . $discourse_post_url_suffix_descripiton . ")**";
+$discord_payload['embeds'][0]['title'] = $discourse_payload["topic_slug"];
+$discord_payload['embeds'][0]['description'] = "**@" . $discourse_payload["username"] . "** " . ($discourse_payload["post_number"] == 1 ? "created" : "replied to") . " this topic with:\n" . $discourse_payload["cooked"] . "\n**[[Read more]](" . $discourse_post_url . $discourse_post_url_suffix_descripiton . ")**";
 $discord_payload['embeds'][0]['thumbnail']['url'] = $discord_embed_thumbnail_url;
 
 // Add a footer to the embed.
@@ -62,7 +59,7 @@ $discord_payload['embeds'][0]['footer']['text'] = $discord_embed_footer_text;
 
 // Possibly include a timestamp in the embed's footer.
 if ($discord_embed_timestamp) {
-	$discord_payload['embeds'][0]['timestamp'] = $discourse_post->created_at;
+	$discord_payload['embeds'][0]['timestamp'] = $discourse_payload["created_at"];
 }
 
 // Send the payload to the Discord webhook.
