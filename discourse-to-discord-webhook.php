@@ -41,19 +41,19 @@ if ($discourse_post->post_type != 1) {
 $discord_payload = array();
 
 // Credit the post's author in the embed.
-$discourse_user = $discourse_payload->user;
-$discord_payload['embeds'][0]['author']['name'] = $discourse_user->username;
-$discord_payload['embeds'][0]['author']['icon_url'] = $discourse_url_protocol . '://' . $discourse_url_domain . str_replace('{size}', '45', $discourse_user->avatar_template);
-$discord_payload['embeds'][0]['author']['url'] = $discourse_url_protocol . '://' . $discourse_url_domain . $discourse_path . 'users/' . $discourse_user->username . $discourse_author_url_suffix;
+$discord_payload['embeds'][0]['author']['name'] = $discourse_post->username;
+$discord_payload['embeds'][0]['author']['icon_url'] = $discourse_url_protocol . '://' . $discourse_url_domain . str_replace('{size}', '45', $discourse_post->avatar_template);
+$discord_payload['embeds'][0]['author']['url'] = $discourse_url_protocol . '://' . $discourse_url_domain . $discourse_path . 'users/' . $discourse_post->username . $discourse_author_url_suffix;
 
 // Build the body of the embed.
 $discourse_topic = $discourse_payload->topic;
-$discourse_post_url = $discourse_url_protocol . '://' . $discourse_url_domain . $discourse_path . 't/' . $discourse_topic->slug . '/' . $discourse_topic->id . ($discourse_post->post_number > 1 ? '/' . $discourse_post->post_number : '');
+$discourse_post_url = $discourse_url_protocol . '://' . $discourse_url_domain . $discourse_path . 't/' . $discourse_post->topic_slug . '/' . $discourse_post->topic_id . ($discourse_post->post_number > 1 ? '/' . $discourse_post->post_number : '');
 $discord_payload['embeds'][0]['type'] = 'rich';
 $discord_payload['embeds'][0]['color'] = hexdec(ltrim($discord_embed_color));
 $discord_payload['embeds'][0]['url'] = $discourse_post_url . $discourse_post_url_suffix_title;
-$discord_payload['embeds'][0]['title'] = $discourse_topic->title;
-$discord_payload['embeds'][0]['description'] = "**@" . $discourse_user->username . "** " . ($discourse_post->post_number == 1 ? "created" : "replied to") . " this topic.\n\n**[[Read more]](" . $discourse_post_url . $discourse_post_url_suffix_descripiton . ")**";
+//$discord_payload['embeds'][0]['title'] = $discourse_topic->title;		// Broken with Discourse's recent webhooks overhaul.
+$discord_payload['embeds'][0]['title'] = 'New post';
+$discord_payload['embeds'][0]['description'] = "**@" . $discourse_post->username . "** " . ($discourse_post->post_number == 1 ? "created" : "replied to") . " this topic.\n\n**[[Read more]](" . $discourse_post_url . $discourse_post_url_suffix_descripiton . ")**";
 $discord_payload['embeds'][0]['thumbnail']['url'] = $discord_embed_thumbnail_url;
 
 // Add a footer to the embed.
