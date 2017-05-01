@@ -52,7 +52,6 @@ $discord_payload['embeds'][0]['type'] = 'rich';
 $discord_payload['embeds'][0]['color'] = hexdec(ltrim($discord_embed_color));
 $discord_payload['embeds'][0]['url'] = $discourse_post_url . $discourse_post_url_suffix_title;
 $discord_payload['embeds'][0]['title'] = $discourse_post->topic_title;
-$discord_payload['embeds'][0]['title'] = 'New post';
 $discord_payload['embeds'][0]['description'] = "**@" . $discourse_post->username . "** " . ($discourse_post->post_number == 1 ? "created" : "replied to") . " this topic.\n\n**[[Read more]](" . $discourse_post_url . $discourse_post_url_suffix_descripiton . ")**";
 $discord_payload['embeds'][0]['thumbnail']['url'] = $discord_embed_thumbnail_url;
 
